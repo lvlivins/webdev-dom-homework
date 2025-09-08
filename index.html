@@ -69,12 +69,12 @@
   buttonEl.addEventListener('click', () => {
 
     if (inputEl.value === "") {
-      inputEl.value = "Введите ваше имя";
+      inputEl.value = "";
       inputEl.style.color = "red";
       return;
     }
     if (textEl.value === "") {
-      textEl.value = "Введите ваш комментарий";
+      textEl.value = "";
       textEl.style.color = "red";
       return;
     }
@@ -84,7 +84,7 @@
     currentComments.innerHTML = `
         <div class="comment-header">
           <div>${inputEl.value}</div>
-          <div>${new Date().toLocaleDateString('ru-RU')} ${new Date().toLocaleTimeString('ru-RU')}</div>
+          <div>${new Date().toLocaleDateString('ru-RU', { month: 'numeric', day: 'numeric', year: '2-digit' }) } ${new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit'})}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
