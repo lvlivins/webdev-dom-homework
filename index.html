@@ -69,16 +69,22 @@
   buttonEl.addEventListener('click', () => {
 
     if (inputEl.value === "") {
-      inputEl.value = "";
-      inputEl.style.color = "red";
+      inputEl.style.backgroundColor = "red";
+      inputEl.value = '';
+      inputEl.onfocus = function() { 
+        this.style.backgroundColor = "";
+    };
       return;
     }
     if (textEl.value === "") {
-      textEl.value = "";
-      textEl.style.color = "red";
+      textEl.style.backgroundColor = "red";
+      textEl.value = '';
+      textEl.onfocus = function() { 
+        this.style.backgroundColor = "";
+      }
       return;
     }
-
+    
     const currentComments = document.createElement('li');
     currentComments.className = 'comment';
     currentComments.innerHTML = `
@@ -99,7 +105,9 @@
         </div>`
     commentsEl.appendChild(currentComments);
     inputEl.value = '';
+    inputEl.style.backgroundColor = '';
     textEl.value = '';
+    textEl.style.backgroundColor = '';
   })
 
   console.log("It works!");
