@@ -9,8 +9,8 @@
 
 <body>
   <div class="container">
-    <ul class="comments">
-      <li class="comment">
+    <ul class="comments" id="commentsContainer">
+      <li class="comment"> 
         <div class="comment-header">
           <div>Глеб Фокин</div>
           <div>12.02.22 12:18</div>
@@ -62,9 +62,62 @@
   const textEl = document.querySelector('.add-form-text');
   const buttonEl = document.querySelector('.add-form-button');
   const commentsEl = document.querySelector('.comments');
-  const counterEl = document.querySelector('.likes-counter');
+  const counterEl = document.querySelector('.likes-counter'); // счетчик неактивный
+  const counterElActive = document.querySelector('.like-button -active-like'); // счетчик активный 
+  const likeEl = document.querySelector('.like-button') // кнопка 
+  const container = document.getElementById("commentsContainer");
 
-  let countLikes = 0;
+
+ let comments = [
+  {
+    userName: 'Глеб Фокин',
+    date: '12.02.22 12:18',
+    commentText: "Это будет первый комментарий на этой странице",
+    likes: 3,
+    isLiked: false 
+  },
+  {
+    userName: 'Варвара Н.',
+    date: '13.02.22 19:22',
+    commentText: "Мне нравится как оформлена эта страница! ❤",
+    likes: 75,
+    isLiked: true
+  }
+];
+
+ function renderComments(comments) {
+  const container = document.getElementById("commentsContainer");
+
+  container.innerHTML = comments.map(comment => 
+       `<li class="comment">
+        <div class="comment-header">
+          <div>${comment.userName}</div>
+          <div>${comment.date}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">${comment.commentText}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${comment.likes}</span>
+            <button class="like-button ${comment.isLiked ? ' -active-like' : ''}"></button>
+          </div>
+        </div>
+        </li>`).join("");
+
+        const commentsElements = document.querySelectorAll(".like-button");
+
+        for (const commentElements of commentsElements) {
+          commentElements.addEventListener('click', () => {
+            console.log('click');
+          } )
+        }
+ }
+
+  renderComments(comments);
+
+  let countLikes = 0; 
 
   buttonEl.addEventListener('click', () => {
 
@@ -72,7 +125,7 @@
       inputEl.style.backgroundColor = "red";
       inputEl.value = '';
       inputEl.onfocus = function() { 
-        this.style.backgroundColor = "";
+        inputEl.style.backgroundColor = "";
     };
       return;
     }
@@ -80,37 +133,27 @@
       textEl.style.backgroundColor = "red";
       textEl.value = '';
       textEl.onfocus = function() { 
-        this.style.backgroundColor = "";
+        textEl.style.backgroundColor = "";
       }
       return;
     }
     
-    const currentComments = document.createElement('li');
-    currentComments.className = 'comment';
-    currentComments.innerHTML = `
-        <div class="comment-header">
-          <div>${inputEl.value}</div>
-          <div>${new Date().toLocaleDateString('ru-RU', { month: 'numeric', day: 'numeric', year: '2-digit' }) } ${new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit'})}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${textEl.value}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">${countLikes}</span>
-            <button class="like-button"></button>
-          </div>
-        </div>`
-    commentsEl.appendChild(currentComments);
+    comments.push({
+    userName: inputEl.value,
+    date: `${new Date().toLocaleDateString('ru-RU', { month: 'numeric', day: 'numeric', year: '2-digit' })} ${new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit'})}`,
+    commentText: textEl.value,
+    likes: countLikes,
+    isLiked: false
+  });
+
+  renderComments(comments);
     inputEl.value = '';
     inputEl.style.backgroundColor = '';
     textEl.value = '';
     textEl.style.backgroundColor = '';
   })
+ 
 
-  console.log("It works!");
 </script>
 
 </html>
