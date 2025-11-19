@@ -61,10 +61,10 @@
   const inputEl = document.querySelector('.add-form-name');
   const textEl = document.querySelector('.add-form-text');
   const buttonEl = document.querySelector('.add-form-button');
-  const commentsEl = document.querySelector('.comments');
-  const counterEl = document.querySelector('.likes-counter'); // счетчик неактивный
-  const counterElActive = document.querySelector('.like-button -active-like'); // счетчик активный 
-  const likeEl = document.querySelector('.like-button') // кнопка 
+  // const commentsEl = document.querySelector('.comments');
+  // const counterEl = document.querySelector('.likes-counter'); // нет моего лайка
+  // const counterElActive = document.querySelector('.like-button -active-like'); // есть мой лайк
+  // const likeButtons = document.querySelectorAll('.like-button') // кнопка 
   const container = document.getElementById("commentsContainer");
 
 
@@ -74,7 +74,7 @@
     date: '12.02.22 12:18',
     commentText: "Это будет первый комментарий на этой странице",
     likes: 3,
-    isLiked: false 
+    isLiked: false
   },
   {
     userName: 'Варвара Н.',
@@ -86,10 +86,8 @@
 ];
 
  function renderComments(comments) {
-  const container = document.getElementById("commentsContainer");
-
-  container.innerHTML = comments.map(comment => 
-       `<li class="comment">
+  container.innerHTML = comments.map((comment, index) =>
+      `<li class="comment">
         <div class="comment-header">
           <div>${comment.userName}</div>
           <div>${comment.date}</div>
@@ -101,59 +99,63 @@
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${comment.likes}</span>
-            <button class="like-button ${comment.isLiked ? ' -active-like' : ''}"></button>
+            <button class="${comment.isLiked ? 'like-button -active-like' : 'like-button'}" data-index="${index}"></button>
           </div>
         </div>
         </li>`).join("");
 
-        const commentsElements = document.querySelectorAll(".like-button");
+        initLikes(); // 1 отрисовка, чтобы на лайках работало событие 
+ };
 
-        for (const commentElements of commentsElements) {
-          commentElements.addEventListener('click', () => {
-            console.log('click');
-          } )
-        }
- }
+  function initLikes() {
+    const likeButtons = document.querySelectorAll('.like-button');
 
-  renderComments(comments);
+      for (const likeButton of likeButtons) {
+      likeButton.addEventListener('click', () => {
+        console.log(likeButton.dataset.index);
+      }); 
+    }
+    };
 
-  let countLikes = 0; 
+ renderComments(comments); // 1 отрисовка страницы (без изменений)
+
+ let countLikes = 0;  
 
   buttonEl.addEventListener('click', () => {
 
     if (inputEl.value === "") {
       inputEl.style.backgroundColor = "red";
-      inputEl.value = '';
       inputEl.onfocus = function() { 
-        inputEl.style.backgroundColor = "";
+      inputEl.style.backgroundColor = "";
     };
-      return;
+    return; 
     }
     if (textEl.value === "") {
       textEl.style.backgroundColor = "red";
-      textEl.value = '';
       textEl.onfocus = function() { 
         textEl.style.backgroundColor = "";
       }
-      return;
+    return;
     }
-    
+
     comments.push({
     userName: inputEl.value,
     date: `${new Date().toLocaleDateString('ru-RU', { month: 'numeric', day: 'numeric', year: '2-digit' })} ${new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit'})}`,
     commentText: textEl.value,
     likes: countLikes,
     isLiked: false
-  });
-
-  renderComments(comments);
+  })
+    renderComments(comments); // 2 отрисовка страницы (выводятся изменения) и очищаются поля name и text 
     inputEl.value = '';
     inputEl.style.backgroundColor = '';
     textEl.value = '';
     textEl.style.backgroundColor = '';
-  })
- 
 
+    });
+
+    initLikes() // 2 отрисовка, чтобы на новык коммента на лайках работало событие 
+
+  
 </script>
 
 </html>
