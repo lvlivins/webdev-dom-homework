@@ -87,22 +87,43 @@
 
   let countLikes = 0;
 
-  const comments = [
-    {
-      userName: 'Глеб Фокин',
-      date: '12.02.22 12:18',
-      commentText: "Это будет первый комментарий на этой странице",
-      likes: 3,
-      isLiked: false
-    },
-    {
-      userName: 'Варвара Н.',
-      date: '13.02.22 19:22',
-      commentText: "Мне нравится как оформлена эта страница! ❤",
-      likes: 75,
-      isLiked: true
-    }
-  ];
+  // const comments = [
+  //   {
+  //     userName: 'Глеб Фокин',
+  //     date: '12.02.22 12:18',
+  //     commentText: "Это будет первый комментарий на этой странице",
+  //     likes: 3,
+  //     isLiked: false
+  //   },
+  //   {
+  //     userName: 'Варвара Н.',
+  //     date: '13.02.22 19:22',
+  //     commentText: "Мне нравится как оформлена эта страница! ❤",
+  //     likes: 75,
+  //     isLiked: true
+  //   }
+  // ];
+
+  let comments = []; // const не дал внести изм в массив
+  // из API - под мой формат
+  const updateComments = (newComments) => {
+    comments = newComments.map((comment) => {
+      return {
+        id: comment.id,
+        userName: comment.author.name,
+        date: new Date(comment.date).toLocaleString('ru-RU', {
+          day: '2-digit',
+          month: '2-digit',
+          year: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+        commentText: comment.text,
+        likes: comment.likes,
+        isLiked: comment.isLiked,
+      };
+    });
+  };
 
   function renderComments(comments) {
     const container = document.getElementById("commentsContainer");
@@ -125,7 +146,7 @@
         </li>`).join("");
 
     initLikes(); // чтобы на новые отрисованные комментарии сразу применялись изменения по лайкам
-    feedbackComments();
+    feedbackComments(); // чтобы на новые отрисованные комментарии сразу работал фидбэк клик
   };
 
   renderComments(comments); // 1 отрисовка - начальные данные, чтобы отрисовались первые 2 коммента
@@ -148,7 +169,7 @@
     }
 
     comments.push({
-      userName: inputEl.value.replaceAll("<", "&lt;").replaceAll("<", "&gt;"),
+      userName: inputEl.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
       date: `${new Date().toLocaleDateString('ru-RU', {
         month: 'numeric',
         day: 'numeric',
@@ -157,12 +178,31 @@
         hour: '2-digit',
         minute: '2-digit'
       })}`,
-      commentText: textEl.value.replaceAll("<", "&lt;").replaceAll("<", "&gt;"),
+      commentText: textEl.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
       likes: countLikes,
       isLiked: false
     })
-    renderComments(comments); // 2 отрисовка - чтобы появился новый коммент с предыдущими отрисоваными комментариями
-    // очищение полей для нового ввода, после отрисовки нового комментария
+
+    renderComments(comments); // 2 отрисовка - чтобы появился новый коммент к предыдущими 2ум отрисованым комментариями
+
+    // fetch post не работает, если не указан перед очищением полей и после рендера !!!
+    fetch('https://wedev-api.sky.pro/api/v1/lada-yarkova/comments', {
+      method: "POST",
+      // stringify - из объекта/массива делает string
+      body: JSON.stringify({
+        // без указания id, date, likes...тк в документации указан только name и text!!!
+        text: textEl.value,
+        name: inputEl.value,
+      })
+    }).then((response) => {
+      return response.json()
+    })
+      .then((data) => {
+        updateComments(data.comments)
+        renderComments(comments);
+      })
+
+    // очищение полей для нового ввода, после отрисовки нового комментария и передачи его в post
     inputEl.value = '';
     inputEl.style.backgroundColor = '';
     textEl.value = '';
@@ -184,9 +224,7 @@
           comments[index].isLiked = false;
           comments[index].likes--;
         }
-
         renderComments(comments); // 3 отрисовка - чтобы по клику комменты отрисовались с обновленными условиями по лайкам
-        feedbackComments();
       });
     }
   };
@@ -200,8 +238,18 @@
         textEl.value = `> ${comments[index].userName} \n ${comments[index].commentText} \n`;
       })
     }
-    textEl.value = '';
   };
+
+  fetch('https://wedev-api.sky.pro/api/v1/lada-yarkova/comments')
+    .then((response) => {
+      return response.json()
+    })
+    .then((data) => {
+      // console.log(data)
+      updateComments(data.comments)
+      renderComments(comments);
+    });
+
 
 </script>
 
