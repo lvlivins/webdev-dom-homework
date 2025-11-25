@@ -193,14 +193,22 @@
         // без указания id, date, likes...тк в документации указан только name и text!!!
         text: textEl.value,
         name: inputEl.value,
-      })
-    }).then((response) => {
+      }).then((response) => {
+      return fetch('https://wedev-api.sky.pro/api/v1/lada-yarkova/comments');
+      }).then((response) => {
       return response.json()
-    })
-      .then((data) => {
-        updateComments(data.comments)
-        renderComments(comments);
-      })
+    }).then(data => {
+      updateComments(data.comments);
+      renderComments(data.comments); 
+    });
+
+    // }).then((response) => {
+    //   return response.json()
+    // })
+    //   .then((data) => {
+    //     updateComments(data.comments)
+    //     renderComments(comments);
+    //   }) 
 
     // очищение полей для нового ввода, после отрисовки нового комментария и передачи его в post
     inputEl.value = '';
