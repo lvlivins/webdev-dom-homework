@@ -4,56 +4,75 @@
 <head>
   <title>Проект "Комменты"</title>
   <meta charset="utf-8" />
-  <link rel="stylesheet" href="styles.css" />
+  <link
+    rel="stylesheet"
+    href="styles.css"
+  />
 </head>
 
 <body>
-  <div class="container">
-    <ul class="comments">
-      <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>
-    </ul>
-    <div class="add-form">
-      <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
-      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
-        id="textarea"></textarea>
-      <div class="add-form-row">
-        <button id="btn" class="add-form-button">Написать</button>
+<div class="container">
+  <ul
+    class="comments"
+    id="commentsContainer"
+  >
+    <li class="comment">
+      <div class="comment-header">
+        <div>Глеб Фокин</div>
+        <div>12.02.22 12:18</div>
       </div>
+      <div class="comment-body">
+        <div class="comment-text">
+          Это будет первый комментарий на этой странице
+        </div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">3</span>
+          <button class="like-button"></button>
+        </div>
+      </div>
+    </li>
+    <li class="comment">
+      <div class="comment-header">
+        <div>Варвара Н.</div>
+        <div>13.02.22 19:22</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">
+          Мне нравится как оформлена эта страница! ❤
+        </div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">75</span>
+          <button class="like-button -active-like"></button>
+        </div>
+      </div>
+    </li>
+  </ul>
+  <div class="add-form">
+    <input
+      type="text"
+      class="add-form-name"
+      placeholder="Введите ваше имя"
+    />
+    <textarea
+      type="textarea"
+      class="add-form-text"
+      placeholder="Введите ваш коментарий"
+      rows="4"
+      id="textarea"
+    ></textarea>
+    <div class="add-form-row">
+      <button
+        id="btn"
+        class="add-form-button"
+      >Написать
+      </button>
     </div>
   </div>
+</div>
 </body>
 
 <script>
@@ -61,48 +80,176 @@
   const inputEl = document.querySelector('.add-form-name');
   const textEl = document.querySelector('.add-form-text');
   const buttonEl = document.querySelector('.add-form-button');
-  const commentsEl = document.querySelector('.comments');
-  const counterEl = document.querySelector('.likes-counter');
+  // const commentsEl = document.querySelector('.comments');
+  // const counterEl = document.querySelector('.likes-counter'); // нет лайка
+  // const counterElActive = document.querySelector('.like-button -active-like'); // есть лайк
+  // const likeButtons = document.querySelectorAll('.like-button') // кнопка 
 
   let countLikes = 0;
 
-  buttonEl.addEventListener('click', () => {
+  // const comments = [
+  //   {
+  //     userName: 'Глеб Фокин',
+  //     date: '12.02.22 12:18',
+  //     commentText: "Это будет первый комментарий на этой странице",
+  //     likes: 3,
+  //     isLiked: false
+  //   },
+  //   {
+  //     userName: 'Варвара Н.',
+  //     date: '13.02.22 19:22',
+  //     commentText: "Мне нравится как оформлена эта страница! ❤",
+  //     likes: 75,
+  //     isLiked: true
+  //   }
+  // ];
 
-    if (inputEl.value === "") {
-      inputEl.value = "";
-      inputEl.style.color = "red";
-      return;
-    }
-    if (textEl.value === "") {
-      textEl.value = "";
-      textEl.style.color = "red";
-      return;
-    }
+  let comments = []; // const не дал внести изм в массив
+  // из API - под мой формат
+  const updateComments = (newComments) => {
+    comments = newComments.map((comment) => {
+      return {
+        id: comment.id,
+        userName: comment.author.name,
+        date: new Date(comment.date).toLocaleString('ru-RU', {
+          day: '2-digit',
+          month: '2-digit',
+          year: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+        commentText: comment.text,
+        likes: comment.likes,
+        isLiked: comment.isLiked,
+      };
+    });
+  };
 
-    const currentComments = document.createElement('li');
-    currentComments.className = 'comment';
-    currentComments.innerHTML = `
+  fetch('https://wedev-api.sky.pro/api/v1/lada-yarkova/comments')
+    .then((response) => {
+      return response.json()
+    })
+    .then((data) => {
+      // console.log(data)
+      updateComments(data.comments)
+      renderComments(comments);
+    });
+
+  function renderComments(comments) {
+    const container = document.getElementById("commentsContainer");
+    container.innerHTML = comments.map((comment, index) =>
+      `<li class="comment" data-index="${index}">
         <div class="comment-header">
-          <div>${inputEl.value}</div>
-          <div>${new Date().toLocaleDateString('ru-RU', { month: 'numeric', day: 'numeric', year: '2-digit' }) } ${new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit'})}</div>
+          <div>${comment.userName}</div>
+          <div>${comment.date}</div>
         </div>
         <div class="comment-body">
-          <div class="comment-text">
-            ${textEl.value}
+          <div class="comment-text">${comment.commentText}
           </div>
         </div>
         <div class="comment-footer">
           <div class="likes">
-            <span class="likes-counter">${countLikes}</span>
-            <button class="like-button"></button>
+            <span class="likes-counter">${comment.likes}</span>
+            <button class="${comment.isLiked ? 'like-button -active-like' : 'like-button'}" data-index="${index}"></button>
           </div>
-        </div>`
-    commentsEl.appendChild(currentComments);
-    inputEl.value = '';
-    textEl.value = '';
-  })
+        </div>
+        </li>`).join("");
 
-  console.log("It works!");
+    initLikes(); // чтобы на новые отрисованные комментарии сразу применялись изменения по лайкам
+    feedbackComments(); // чтобы на новые отрисованные комментарии сразу работал фидбэк клик
+  };
+
+  renderComments(comments); // 1 отрисовка - локально показываются данные 
+
+  buttonEl.addEventListener('click', () => {
+// проверка, чтобы все поля были заполнены
+    if (inputEl.value === "") {
+      inputEl.style.backgroundColor = "red";
+      inputEl.onfocus = function () {
+        inputEl.style.backgroundColor = "";
+      };
+      return;
+    }
+    if (textEl.value === "") {
+      textEl.style.backgroundColor = "red";
+      textEl.onfocus = function () {
+        textEl.style.backgroundColor = "";
+      }
+      return;
+    }
+
+    comments.push({
+      userName: inputEl.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+      date: `${new Date().toLocaleDateString('ru-RU', {
+        month: 'numeric',
+        day: 'numeric',
+        year: '2-digit'
+      })} ${new Date().toLocaleTimeString('ru-RU', {
+        hour: '2-digit',
+        minute: '2-digit'
+      })}`,
+      commentText: textEl.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+      likes: countLikes,
+      isLiked: false
+    })
+
+     renderComments(comments);// 2 отрисовка - локально показывается новый коммент 
+    // fetch post - перед очищением полей и после рендера
+    fetch('https://wedev-api.sky.pro/api/v1/lada-yarkova/comments', {
+      method: "POST",
+      body: JSON.stringify({
+        text: textEl.value,
+        name: inputEl.value,
+      }), 
+      }).then((response) => {
+      return response.json()
+      }).then(() => {
+        return fetch('https://wedev-api.sky.pro/api/v1/lada-yarkova/comments');
+      }).then((response) =>{
+        return response.json();
+      }).then((data) => {
+      updateComments(data.comments);
+      renderComments(comments);
+      });
+    
+    // очищение полей для нового ввода, после отрисовки нового комментария и передачи его в post
+    inputEl.value = '';
+    inputEl.style.backgroundColor = '';
+    textEl.value = '';
+    textEl.style.backgroundColor = '';
+  });
+
+  function initLikes() {
+    const likeButtons = document.querySelectorAll('.like-button');
+
+    for (const likeButton of likeButtons) {
+      likeButton.addEventListener('click', (event) => {
+        event.stopPropagation() // клик по лайку не должен вызывать feedbackComments
+        const index = likeButton.dataset.index;
+
+        if (comments[index].isLiked === false) {
+          comments[index].isLiked = true;
+          comments[index].likes++;
+        } else {
+          comments[index].isLiked = false;
+          comments[index].likes--;
+        }
+        renderComments(comments); // 3 отрисовка - локально комменты показывают лайк
+      });
+    }
+  };
+
+  function feedbackComments() {
+    const commentElements = document.querySelectorAll("li");
+
+    for (const commentElement of commentElements) {
+      commentElement.addEventListener('click', () => {
+        const index = commentElement.dataset.index;
+        textEl.value = `> ${comments[index].userName} \n ${comments[index].commentText} \n`;
+      })
+    }
+  };
+
 </script>
 
 </html>
