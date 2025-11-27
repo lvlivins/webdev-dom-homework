@@ -81,8 +81,8 @@
   const textEl = document.querySelector('.add-form-text');
   const buttonEl = document.querySelector('.add-form-button');
   // const commentsEl = document.querySelector('.comments');
-  // const counterEl = document.querySelector('.likes-counter'); // нет моего лайка
-  // const counterElActive = document.querySelector('.like-button -active-like'); // есть мой лайк
+  // const counterEl = document.querySelector('.likes-counter'); // нет лайка
+  // const counterElActive = document.querySelector('.like-button -active-like'); // есть лайк
   // const likeButtons = document.querySelectorAll('.like-button') // кнопка 
 
   let countLikes = 0;
@@ -125,6 +125,16 @@
     });
   };
 
+  fetch('https://wedev-api.sky.pro/api/v1/lada-yarkova/comments')
+    .then((response) => {
+      return response.json()
+    })
+    .then((data) => {
+      // console.log(data)
+      updateComments(data.comments)
+      renderComments(comments);
+    });
+
   function renderComments(comments) {
     const container = document.getElementById("commentsContainer");
     container.innerHTML = comments.map((comment, index) =>
@@ -149,7 +159,7 @@
     feedbackComments(); // чтобы на новые отрисованные комментарии сразу работал фидбэк клик
   };
 
-  renderComments(comments); // 1 отрисовка - начальные данные, чтобы отрисовались первые 2 коммента
+  renderComments(comments); // 1 отрисовка - локально показываются данные 
 
   buttonEl.addEventListener('click', () => {
 // проверка, чтобы все поля были заполнены
@@ -183,27 +193,24 @@
       isLiked: false
     })
 
-    renderComments(comments); // 2 отрисовка - чтобы появился новый коммент к предыдущими 2ум отрисованым комментариями
-
-    // fetch post не работает, если не указан перед очищением полей и после рендера !!!
+     renderComments(comments);// 2 отрисовка - локально показывается новый коммент 
+    // fetch post - перед очищением полей и после рендера
     fetch('https://wedev-api.sky.pro/api/v1/lada-yarkova/comments', {
       method: "POST",
-      // stringify - из объекта/массива делает string
       body: JSON.stringify({
-        // без указания id, date, likes...тк в документации указан только name и text!!!
         text: textEl.value,
         name: inputEl.value,
+      }), 
       }).then((response) => {
       return response.json()
-      }) 
-      .then((response) => {
-      return fetch('https://wedev-api.sky.pro/api/v1/lada-yarkova/comments');
-      }).then((response) => {
-      return response.json()
-    }).then(data => {
+      }).then(() => {
+        return fetch('https://wedev-api.sky.pro/api/v1/lada-yarkova/comments');
+      }).then((response) =>{
+        return response.json();
+      }).then((data) => {
       updateComments(data.comments);
-      renderComments(data.comments); 
-    }) });
+      renderComments(comments);
+      });
     
     // очищение полей для нового ввода, после отрисовки нового комментария и передачи его в post
     inputEl.value = '';
@@ -227,7 +234,7 @@
           comments[index].isLiked = false;
           comments[index].likes--;
         }
-        renderComments(comments); // 3 отрисовка - чтобы по клику комменты отрисовались с обновленными условиями по лайкам
+        renderComments(comments); // 3 отрисовка - локально комменты показывают лайк
       });
     }
   };
@@ -242,17 +249,6 @@
       })
     }
   };
-
-  fetch('https://wedev-api.sky.pro/api/v1/lada-yarkova/comments')
-    .then((response) => {
-      return response.json()
-    })
-    .then((data) => {
-      // console.log(data)
-      updateComments(data.comments)
-      renderComments(comments);
-    });
-
 
 </script>
 
