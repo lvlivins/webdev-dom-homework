@@ -83,7 +83,18 @@
   // const commentsEl = document.querySelector('.comments');
   // const counterEl = document.querySelector('.likes-counter'); // нет лайка
   // const counterElActive = document.querySelector('.like-button -active-like'); // есть лайк
-  // const likeButtons = document.querySelectorAll('.like-button') // кнопка 
+  // const likeButtons = document.querySelectorAll('.like-button') // кнопка
+  const formEl = document.querySelector('.add-form');
+  const containerEl = document.querySelector('.container');
+  containerEl.classList.add('disabled');
+  formEl.style.display = 'none';
+  const loadEl = document.createElement('div');
+  loadEl.className = 'container__jsEdit';
+  loadEl.innerHTML = '<div class="container__jsInner"><p> Идет загрузка списка комментариев. Подождите! </p></div>';
+  const containerDivInner = loadEl.querySelector('.container__jsInner');
+  loadEl.setAttribute('style', 'background-color: red; border: 2px solid black; width: 600px; height: 200px; display: flex; align-items: center;');
+  containerDivInner.setAttribute('style', 'font-size: 28px; color: white; font-weight: bold; text-align: center;')
+  containerEl.prepend(loadEl);
 
   let countLikes = 0;
 
@@ -125,15 +136,24 @@
     });
   };
 
-  fetch('https://wedev-api.sky.pro/api/v1/lada-yarkova/comments')
-    .then((response) => {
-      return response.json()
-    })
-    .then((data) => {
-      // console.log(data)
-      updateComments(data.comments)
-      renderComments(comments);
-    });
+ function getAPI() {
+    return fetch('https://wedev-api.sky.pro/api/v1/lada-yarkova/comments')
+      .then((response) => {
+        return response.json()
+      })
+      .then((data) => {
+        // console.log(data)
+
+        containerEl.classList.remove('disabled');
+        loadEl.remove();
+        formEl.style.display = 'flex'
+
+        updateComments(data.comments)
+        renderComments(comments);
+      });
+  }
+
+  getAPI();
 
   function renderComments(comments) {
     const container = document.getElementById("commentsContainer");
@@ -159,7 +179,7 @@
     feedbackComments(); // чтобы на новые отрисованные комментарии сразу работал фидбэк клик
   };
 
-  renderComments(comments); // 1 отрисовка - локально показываются данные 
+  renderComments(comments); // 1 отрисовка - локально показываются данные
 
   buttonEl.addEventListener('click', () => {
 // проверка, чтобы все поля были заполнены
@@ -193,30 +213,36 @@
       isLiked: false
     })
 
-     renderComments(comments);// 2 отрисовка - локально показывается новый коммент 
+    // renderComments(comments);// 2 отрисовка - локально показывается новый коммент
+
     // fetch post - перед очищением полей и после рендера
     fetch('https://wedev-api.sky.pro/api/v1/lada-yarkova/comments', {
       method: "POST",
       body: JSON.stringify({
         text: textEl.value,
         name: inputEl.value,
-      }), 
-      }).then((response) => {
+      }),
+    }).then((response) => {
       return response.json()
-      }).then(() => {
-        return fetch('https://wedev-api.sky.pro/api/v1/lada-yarkova/comments');
-      }).then((response) =>{
-        return response.json();
-      }).then((data) => {
-      updateComments(data.comments);
-      renderComments(comments);
-      });
-    
-    // очищение полей для нового ввода, после отрисовки нового комментария и передачи его в post
-    inputEl.value = '';
-    inputEl.style.backgroundColor = '';
-    textEl.value = '';
-    textEl.style.backgroundColor = '';
+    }).then (() => {
+      return getAPI();
+
+    })
+    //   .then(() => {
+    //   return fetch('https://wedev-api.sky.pro/api/v1/lada-yarkova/comments');
+    // }).then((response) => {
+    //   return response.json();
+    // })
+    // .then((data) => {
+    //   updateComments(data.comments);
+    //   renderComments(comments);
+    .then(() => {
+      // очищение полей для нового ввода, после отрисовки нового комментария и передачи его в post
+      inputEl.value = '';
+      inputEl.style.backgroundColor = '';
+      textEl.value = '';
+      textEl.style.backgroundColor = '';
+    });
   });
 
   function initLikes() {
