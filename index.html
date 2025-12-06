@@ -80,14 +80,9 @@
   const inputEl = document.querySelector('.add-form-name');
   const textEl = document.querySelector('.add-form-text');
   const buttonEl = document.querySelector('.add-form-button');
-  // const commentsEl = document.querySelector('.comments');
-  // const counterEl = document.querySelector('.likes-counter'); // нет лайка
-  // const counterElActive = document.querySelector('.like-button -active-like'); // есть лайк
-  // const likeButtons = document.querySelectorAll('.like-button') // кнопка
   const formEl = document.querySelector('.add-form');
   const containerEl = document.querySelector('.container');
-  containerEl.classList.add('disabled');
-  formEl.style.display = 'none';
+
   const loadEl = document.createElement('div');
   loadEl.className = 'container__jsEdit';
   loadEl.innerHTML = '<div class="container__jsInner"><p> Идет загрузка списка комментариев. Подождите! </p></div>';
@@ -95,6 +90,16 @@
   loadEl.setAttribute('style', 'background-color: red; border: 2px solid black; width: 600px; height: 200px; display: flex; align-items: center;');
   containerDivInner.setAttribute('style', 'font-size: 28px; color: white; font-weight: bold; text-align: center;')
   containerEl.prepend(loadEl);
+  containerEl.classList.add('disabled'); // вся стр
+  formEl.style.display = 'none'; // блок добавления комментария
+
+  const formLoadEl = document.createElement('div');
+  formLoadEl.className = 'newComment__jsEdit'
+  formLoadEl.innerHTML = '<div class ="newComment__jsInner"><p> Идет загрузка нового комментария. Подождите! </p></div>';
+  const commentDivInner = formLoadEl.querySelector('.newComment__jsInner');
+  formLoadEl.setAttribute('style', 'background-color: red; margin-top: 48px; border: 2px solid black; width: 600px; height: 200px; display: flex; align-items: center;');
+  commentDivInner.setAttribute('style', 'font-size: 28px; color: white; font-weight: bold; text-align: center;')
+  formLoadEl.style.display = 'none';
 
   let countLikes = 0;
 
@@ -132,8 +137,8 @@
         commentText: comment.text,
         likes: comment.likes,
         isLiked: comment.isLiked,
-      };
-    });
+      }
+    })
   };
 
  function getAPI() {
@@ -146,12 +151,12 @@
 
         containerEl.classList.remove('disabled');
         loadEl.remove();
-        formEl.style.display = 'flex'
+        formEl.style.display = 'flex';
 
-        updateComments(data.comments)
+        updateComments(data.comments);
         renderComments(comments);
-      });
-  }
+      })
+  };
 
   getAPI();
 
@@ -173,10 +178,10 @@
             <button class="${comment.isLiked ? 'like-button -active-like' : 'like-button'}" data-index="${index}"></button>
           </div>
         </div>
-        </li>`).join("");
+        </li>`).join("")
 
-    initLikes(); // чтобы на новые отрисованные комментарии сразу применялись изменения по лайкам
-    feedbackComments(); // чтобы на новые отрисованные комментарии сразу работал фидбэк клик
+    initLikes();
+    feedbackComments();
   };
 
   renderComments(comments); // 1 отрисовка - локально показываются данные
@@ -213,6 +218,10 @@
       isLiked: false
     })
 
+    formEl.style.display = 'none';
+    formLoadEl.style.display = 'flex';
+    formEl.replaceWith(formLoadEl);
+
     // renderComments(comments);// 2 отрисовка - локально показывается новый коммент
 
     // fetch post - перед очищением полей и после рендера
@@ -223,10 +232,9 @@
         name: inputEl.value,
       }),
     }).then((response) => {
-      return response.json()
+      return response.json();
     }).then (() => {
       return getAPI();
-
     })
     //   .then(() => {
     //   return fetch('https://wedev-api.sky.pro/api/v1/lada-yarkova/comments');
@@ -237,12 +245,15 @@
     //   updateComments(data.comments);
     //   renderComments(comments);
     .then(() => {
+      formLoadEl.style.display = 'none';
+      formEl.style.display = 'flex';
+      formLoadEl.replaceWith(formEl);
       // очищение полей для нового ввода, после отрисовки нового комментария и передачи его в post
       inputEl.value = '';
       inputEl.style.backgroundColor = '';
       textEl.value = '';
       textEl.style.backgroundColor = '';
-    });
+    })
   });
 
   function initLikes() {
@@ -261,7 +272,7 @@
           comments[index].likes--;
         }
         renderComments(comments); // 3 отрисовка - локально комменты показывают лайк
-      });
+      })
     }
   };
 
