@@ -160,7 +160,7 @@
         containerEl.classList.remove('disabled');
         loadEl.remove();
       })
-  };
+  }
 
   getAPI();
 
@@ -186,7 +186,7 @@
 
     initLikes();
     feedbackComments();
-  };
+  }
 
   renderComments(comments); // 1 отрисовка - локально показываются данные
 
@@ -269,12 +269,11 @@
         .catch((error) => {
           if (error.message === "NetworkError when attempting to fetch resource." || error.message === "Failed to fetch") {
             alert("У пользователя пропал интернет");
-          } else {
+          } else if
+            (error.message === "Сервер сломался, попробуй позже") {
+              handlePostClick();
+            } else {
             alert(error.message);
-          }
-
-          if (error.message === "Сервер сломался, попробуй позже") {
-            handlePostClick();
           }
         })
         .finally(() => {
@@ -325,7 +324,7 @@
         });
       })
     }
-  };
+  }
 
   function feedbackComments() {
     const commentElements = document.querySelectorAll("li");
@@ -336,7 +335,7 @@
         textEl.value = `> ${comments[index].userName} \n ${comments[index].commentText} \n`;
       })
     }
-  };
+  }
 
 </script>
 
