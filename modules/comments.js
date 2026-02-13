@@ -1,7 +1,7 @@
 import { replaceAllEl } from './replaceAll.js'
 
 export const comments = []
-// из API - под мой формат
+// из API - под формат
 export const updateComments = (commentEl) => {
     const newComments = commentEl.map((comment) => {
         return {

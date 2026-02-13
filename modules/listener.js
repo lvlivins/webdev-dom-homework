@@ -1,8 +1,5 @@
 import { renderComments } from './render.js'
-// import { commentElements } from '../script.js'
-// import { likeButtons } from '../script.js'
 import { comments } from './comments.js'
-import { textEl } from '../script.js'
 
 export function initLikes() {
     const likeButtons = document.querySelectorAll('.like-button')
@@ -46,6 +43,8 @@ export function initLikes() {
 
 export function feedbackComments() {
     const commentElements = document.querySelectorAll('li')
+    const textEl = document.querySelector('.add-form-text')
+
     for (const commentElement of commentElements) {
         commentElement.addEventListener('click', () => {
             const index = commentElement.dataset.index

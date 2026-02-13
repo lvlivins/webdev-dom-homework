@@ -1,16 +1,18 @@
 import { comments } from './comments.js'
-import { textEl } from '../script.js'
-import { inputEl } from '../script.js'
-import { formEl } from '../script.js'
-import { formLoadEl } from '../script.js'
 import { handlePostClick } from './api.js'
-import { buttonEl } from '../script.js'
 import { replaceAllEl } from './replaceAll.js'
 
 export let countLikes = 0
 
 export function btnFunction() {
+    const buttonEl = document.querySelector('.add-form-button')
+
     buttonEl.addEventListener('click', () => {
+        const inputEl = document.querySelector('.add-form-name')
+        const textEl = document.querySelector('.add-form-text')
+        const formLoadEl = document.createElement('div')
+        const formEl = document.querySelector('.add-form')
+
         // проверка, чтобы все поля были заполнены
         if (inputEl.value === '') {
             inputEl.style.backgroundColor = 'red'
@@ -26,6 +28,8 @@ export function btnFunction() {
             }
             return
         }
+
+        handlePostClick()
 
         comments.push({
             userName: replaceAllEl(inputEl.value),
@@ -49,9 +53,6 @@ export function btnFunction() {
         }
 
         // renderComments(comments);// 2 отрисовка - локально показывается новый коммент
-
         // fetch post - перед очищением полей и после рендера
-
-        handlePostClick()
     })
 }

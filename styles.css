@@ -136,6 +136,90 @@ body {
     opacity: 0.9;
   }
 
+.login-hint {
+  font-size: 16px;
+  color: #ffffff;
+  text-align: center;
+  margin-top: 24px;
+}
+
+.login-link {
+  cursor: pointer;
+  font-weight: 500;
+  text-decoration: none;
+  transition: text-decoration 0.2s ease;
+}
+
+.login-link:hover {
+  text-decoration: underline;
+}
+
+.auth {
+  background: radial-gradient(
+    75.42% 75.42% at 50% 42.37%,
+    rgba(53, 53, 53, 0) 22.92%,
+    #7334ea 100%
+  );
+  padding: 24px 28px;
+  border-radius: 12px;
+  max-width: 360px;
+  width: 100%;
+}
+
+.auth__title {
+  font-size: 24px;
+  color: #ffffff;
+  text-align: center;
+  margin: 0 0 16px;
+  font-weight: 500;
+}
+
+.auth__form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth__input {
+  font-size: 16px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+}
+
+.auth__btnbox {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.auth__btn {
+  font-size: 16px;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  flex: 1;
+}
+
+.auth__btn_entry {
+  background-color: #bcec30;;
+  color: #6a1bcb;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.auth__btn_reg {
+  background-color: transparent;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.auth__btn:hover {
+  opacity: 0.9;
+}
+
 @keyframes rotating {
   from {
     transform: rotate(0deg);
